@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Gomoku Game</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+  <body>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js
+" type="text/javascript"></script>
+  <script src="script.js" type="text/javascript"></script></body>
+
+  <script>
+// Create 2D array representing game board
+var gameBoard = [
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x",],
+];
+
+
+$(document).ready(function() {
+  var whoseTurn = 0;
+  var gamePlaying = true;
+  // Determine whose turn it is
+  function isEven(n) {
+  	return n % 2 == 0;
+  }
+
+  function showTurn() {
+    if(isEven(whoseTurn)) {
+      $("#white").hide();
+      $("#black").show();
+
+    } else {
+      $("#white").show();
+      $("#black").hide();
+    }
+  }
+    // Hide the turn headers
+    $("#black").hide();
+    $("#white").hide();
+    // Create the Game Board
+    for(var i = 0; i < 15; i++) {
+      for(var j = 0; j < 15; j++) {
+        $('#maindiv').append('<div id="gameBoard' + "[" + i + "]" + "[" + j + "]" + '" class="divcells"></div>' )
+      }
+    }
+
+
+// Check for a win.
+// a = piece color in gameBoard array
+// b = piece color in h1 announcement
+function checkWin(a, b) {
+
+  // Loop through the array and detect a vertical win
+  for(var i = 0; i < gameBoard.length; i++) {
+      for(var j = 0; j < gameBoard[0].length; j++){
+        if(gameBoard[i][j] === a){
+          if(gameBoard[i+1][j] === a) {
+              if(gameBoard[i+2][j] === a){
+                  if(gameBoard[i+3][j] === a){
+                      if(gameBoard[i+4][j] === a){
+                        $('#winner').append("<h1>"+ b + " wins!</h1>");
+                        gamePlaying = false;
+                      }
+                   }
+                }
+              } 
+            }
+          }
+        }
+
+  // Loop through the array and detect a horizontal win
+  for(var i = 0; i < gameBoard.length; i++) {
+      for(var j = 0; j < gameBoard[0].length; j++){
+        if(gameBoard[i][j] === a){
+          if(gameBoard[i][j+1] === a) {
+              if(gameBoard[i][j+2] === a){
+                  if(gameBoard[i][j+3] === a){
+                      if(gameBoard[i][j+4] === a){
+                        $('#winner').append("<h1>"+ b + " wins!</h1>");
+                        gamePlaying = false;
+                      }
+                   }
+                }
+              } 
+            }
+          }
+        }
+
+  // Loop through the array and detect a descending diagonal win
+  for(var i = 0; i < gameBoard.length; i++) {
+      for(var j = 0; j < gameBoard[0].length; j++){
+        if(gameBoard[i][j] === a){
+          if(gameBoard[i+1][j+1] === a) {
+              if(gameBoard[i+2][j+2] === a){
+                  if(gameBoard[i+3][j+3] === a){
+                      if(gameBoard[i+4][j+4] === a){
+                        $('#winner').append("<h1>"+ b + " wins!</h1>");
+                      }
+                   }
+                }
+              } 
+            }
+          }
+        }
+
+  // Loop through the array and detect an acescending diagonal win
+  for(var i = 0; i < gameBoard.length; i++) {
+      for(var j = 0; j < gameBoard[0].length; j++){
+        if(gameBoard[i][j] === a){ 
+              if(gameBoard[i-1][j+1] === a) {
+                if(gameBoard[i-2][j+2] === a){
+                  if(gameBoard[i-3][j+3] === a){
+                      if(gameBoard[i-4][j+4] === a){
+                        $('#winner').append("<h1>"+ b + " wins!</h1>");
+                      }
+                   }
+                }
+              } 
+            }
+          }
+        }
+}
+
+  // Drawing pieces on the ID of the Div clicked. 
+  // Determine whose turn it is.
+  // Even = "White" : Odd = "Black"
+     
+     $(document).on('click','.divcells', function(){ 
+
+     console.log("You clicked " + this.id);
+     whoseTurn = whoseTurn + 1;
+     if(isEven(whoseTurn) && gamePlaying) {
+     	$(this).addClass("clickedOne");
+
+      // Register clicking of gameboard to gameBoard 2D array.
+      var clicked = this.id;
+      // Parse clicked "string" for numbers and extract them
+      let s = clicked;
+      let result = s.match(/\d+/g).map(n => parseInt(n)); 
+      // Set extracted numbers from clicked "string" as row and column coordinates
+      row = result[0];
+      column = result[1];
+      gameBoard[row][column] = "w";
+
+      // Check for a white win
+      checkWin("w", "White");
+      showTurn();
+
+
+     } else if(gamePlaying) {
+     	$(this).addClass("clickedTwo");
+      // Register clicking of gameboard to gameBoard 2D array.
+      var clicked = this.id;
+      // Parse clicked "string" for numbers and extract them
+      let s = clicked;
+      let result = s.match(/\d+/g).map(n => parseInt(n)); 
+      // Set extracted numbers from clicked "string" as row and column coordinates
+      row = result[0];
+      column = result[1];
+      gameBoard[row][column] = "b";
+
+      // Check for a black win
+      checkWin("b", "Black");
+      showTurn();  
+     } else {
+      // nothing
+     }
+
+
+
+ 	});
+ 
+});
+
+</script>
+<h1> Gomoku Game </h1>
+<div id="winner"></div>
+
+<button id="newGame" onclick="location.reload()">New Game</button>
+
+<div id="maindiv"></div>
+
+<div id="showTurn">
+  <h1 id="white">White's Turn<h1>
+  <h1 id="black">Black's Turn</h1>
+</div>
+
+<div id="rulesContainer">
+  <h3> Rules </h3>
+  <p id="rules">
+    <pre>
+      1. Take turns with your opponent laying black or white pieces.
+      2. Black pieces move first.
+      3. The player to connect five in a row first wins!
+      4. Good luck and have fun.
+    </pre>
+  </p>
+</div>
+
+</html>
